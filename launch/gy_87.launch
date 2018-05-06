@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+
+<launch>
+	<node name="imu"
+		ns="gy_87"
+		pkg="gy_87"
+		type="gy_87_node"
+		output="screen"
+		required="true"
+		launch-prefix="sudo -E"
+	/>
+
+</launch>
