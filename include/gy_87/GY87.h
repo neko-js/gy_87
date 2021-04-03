@@ -13,23 +13,23 @@ namespace gy_87 {
 
 class GY87 {
     private:
-		ros::Publisher pub_imu_;
-		ros::Publisher pub_mag_;
-		MPU6050 mpu_;
-		HMC5883L hmc_;
-		float ax, ay, az, gx, gy, gz, mx, my, mz;
-  		int16_t axi, ayi, azi, gxi, gyi, gzi, mxi, myi, mzi;
-  		sensor_msgs::Imu msg_imu_;
-  		sensor_msgs::MagneticField msg_mag_;
+        ros::Publisher pub_imu_;
+        ros::Publisher pub_mag_;
+        MPU6050 mpu_;
+        HMC5883L hmc_;
+        float ax, ay, az, gx, gy, gz, mx, my, mz;
+        int16_t axi, ayi, azi, gxi, gyi, gzi, mxi, myi, mzi;
+        sensor_msgs::Imu msg_imu_;
+        sensor_msgs::MagneticField msg_mag_;
 
-		float getAccelerationFloat(int16_t a, int range_in_g = 2);
-		float getAngularVelocityFloat(int16_t g, int range_in_deg = 250);
-		float getMagneticFieldFloat(int16_t m, float range_in_T = 1.3);
+        float getAccelerationFloat(int16_t a, int range_in_g = 2);
+        float getAngularVelocityFloat(int16_t g, int range_in_deg = 250);
+        float getMagneticFieldFloat(int16_t m, float range_in_T = 1.3);
         
-	public:
+    public:
         GY87(ros::NodeHandle nh);
         ~GY87();
-		void publish();
+        void publish();
 };
 
 }
