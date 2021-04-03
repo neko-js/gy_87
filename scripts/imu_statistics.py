@@ -8,7 +8,7 @@ import rospy
 from sensor_msgs.msg import Imu
 from tf.transformations import euler_from_quaternion
 import numpy as np
-import pyyaml
+import yaml
 import rospkg
 import os
 
@@ -56,7 +56,7 @@ def manage_output_directory(pkg_name):
     r = rospkg.RosPack()
     new_path = r.get_path(pkg_name)
     os.chdir(new_path)
-    if 'params' not in os.listdir:
+    if 'params' not in os.listdir("."):
         os.mkdir('params')
     os.chdir(new_path + '/params')
 
@@ -70,7 +70,7 @@ def compute_variance(measures):
     avg = np.sum(measures) / samples
     errors = measures - avg
     variance = np.sum(np.multiply(errors, errors)) / (samples - 1)
-    return variance
+    return float(variance)
 
 
 if __name__ == '__main__':
@@ -106,7 +106,8 @@ if __name__ == '__main__':
                              0.0, 0.0, compute_variance(linear_acceleration_z)]
     }
 
-    pyyaml.dump(dict_covariances)
+    print dict_covariances
+    yaml.dump(dict_covariances)
 
     with open(file_name, 'w') as out_file:
-        out_file.write(pyyaml.dump(dict_covariances))
+        out_file.write(yaml.dump(dict_covariances))
