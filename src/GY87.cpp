@@ -11,6 +11,8 @@ GY87::GY87(ros::NodeHandle nh){
   pub_imu_ = nh.advertise<sensor_msgs::Imu>("imu_data", 1000);
 	pub_mag_ = nh.advertise<sensor_msgs::MagneticField>("magnetic_field", 1000);
 
+  msg_imu_.header.frame_id = "imu_link";
+
   // Get covariance parameters
   std::string params[3] = { "/angular_vel_cov", "/linear_accel_cov", "/orientation_cov" };
 
