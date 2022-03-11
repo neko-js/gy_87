@@ -1,6 +1,11 @@
 <?xml version="1.0"?>
 
 <launch>
+	<arg name="imu_cov_path" default="$(find gy_87)/params/imu_covariance.yaml"/>
+
+	<!-- Load IMU covariances from YAML file to parameter server -->
+	<rosparam file="$(arg imu_cov_path)" command="load"/>
+
 	<node name="imu"
 		ns="gy_87"
 		pkg="gy_87"
@@ -9,5 +14,4 @@
 		required="true"
 		launch-prefix="sudo -E"
 	/>
-
 </launch>

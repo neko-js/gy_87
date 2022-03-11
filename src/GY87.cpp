@@ -1,4 +1,6 @@
 #include "GY87.h"
+#include <string>
+#include <vector>
 
 namespace gy_87 {
 
@@ -6,8 +8,36 @@ namespace gy_87 {
 GY87::GY87(ros::NodeHandle nh){
 	// Init publishers
 	ROS_INFO("GY87: Init Publishers...");
-    pub_imu_ = nh.advertise<sensor_msgs::Imu>("imu_data", 1000);
+  pub_imu_ = nh.advertise<sensor_msgs::Imu>("imu_data", 1000);
 	pub_mag_ = nh.advertise<sensor_msgs::MagneticField>("magnetic_field", 1000);
+
+  msg_imu_.header.frame_id = "imu_link";
+
+  // Get covariance parameters
+  std::string params[3] = { "/angular_vel_cov", "/linear_accel_cov", "/orientation_cov" };
+
+  boost::array<double, 9>* vars[3] = {
+    &msg_imu_.angular_velocity_covariance,
+    &msg_imu_.linear_acceleration_covariance,
+    &msg_imu_.orientation_covariance
+  };
+  std::vector<double> value;
+  for (int i=0; i < 3; ++i)
+  {
+    std::string p = params[i];
+    if (nh.getParam(p, value))
+    {
+      auto data = value.data();
+      for (int j=0; j < 9; ++j) {
+        vars[i]->at(j) = value[j];
+      }
+      ROS_INFO("Got param: %s", p);
+    }
+    else
+    {
+      ROS_WARN("Failed to get param %s, default to zeros...", p);
+    }
+  }
 	
 	// Init I2C
 	ROS_INFO("GY87: Init I2C...");
@@ -19,7 +49,7 @@ GY87::GY87(ros::NodeHandle nh){
 	mpu_.initialize();
 
 	// Enable I2C bypass to be able to connect to magnet sensor
-	// (connected to auxilary I2C of MPU)
+	// (connected to auxiliary I2C of MPU)
 	mpu_.setI2CMasterModeEnabled(false);
 	mpu_.setI2CBypassEnabled(true) ;
 	mpu_.setSleepEnabled(false);
@@ -50,7 +80,7 @@ void GY87::publish(){
 	// Calculate attitude quaternion
 	MadgwickAHRSupdate(gx, gy, gz, ax, ay, az, mx, my, mz);
 
-	// Create message
+	// Create messages
 	msg_imu_.orientation.x = q0;
 	msg_imu_.orientation.y = q1;
 	msg_imu_.orientation.z = q2;
@@ -61,6 +91,7 @@ void GY87::publish(){
 	msg_imu_.angular_velocity.x = gx;
 	msg_imu_.angular_velocity.y = gy;
 	msg_imu_.angular_velocity.z = gz;
+
 	msg_mag_.magnetic_field.x = mx;
 	msg_mag_.magnetic_field.y = my;
 	msg_mag_.magnetic_field.z = mz;
