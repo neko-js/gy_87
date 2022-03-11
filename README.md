@@ -56,8 +56,6 @@ There might be a bug in ROS where a node run with sudo is not exiting completely
 
 * The integer values read from the sensors are currently interpolated from two values found somewhere online. Definitely need to check the values for the magnetic field. However, the length of the magnetic field vector is not important since it gets normalized during quaternion calculation.
 
-* Add covariance matrices.
-
 ## Credits
 
 This package is utilising work from the creators of the following libraries:
